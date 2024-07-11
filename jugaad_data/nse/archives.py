@@ -171,6 +171,8 @@ class NSEArchives:
 
             header = ["Instrument", "Symbol", "Expiry", "Strike", "Type", "Open", "High", "Low", "Close", "Settle", "Contracts", "Val_in_lakh", "OI", "Change_in_OI", "Date"]
 
+            df = df.fillna(0)
+
             df.to_csv(fname, columns=header, index=False)
 
             #fp.write(text)
@@ -200,6 +202,8 @@ class NSEArchives:
             df["Date"] = pd.to_datetime(df["Date"]).dt.strftime("%d-%b-%Y")
 
             header = ["Symbol", "Series", "Open", "High", "Low", "Close", "Last", "PrevClose", "Tottrdqty", "Tottrdval", "Date", "Totaltrades", "ISIN"]
+
+            df = df.fillna(0)
 
             df.to_csv(fname, columns=header, index=False)
 
