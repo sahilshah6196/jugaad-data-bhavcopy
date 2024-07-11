@@ -9,6 +9,8 @@ import csv
 import zipfile
 import requests
 import pprint
+import pandas as pd
+
 def unzip(function):
     
     def unzipper(*args, **kwargs):
@@ -153,8 +155,25 @@ class NSEArchives:
         if os.path.isfile(fname) and skip_if_present:
             return fname
         text = self.udiff_bhavcopy_fo_raw(dt)
-        with open(fname, 'w') as fp:
-            fp.write(text)
+        with open(fname, 'wb') as fp:
+
+             df = pd.read_csv(BytesIO(text))
+
+            df.rename(columns={"FinInstrmTp": "Instrument", "TckrSymb": "Symbol", "XpryDt": "Expiry", "StrkPric": "Strike", "OptnTp": "Type", "OpnPric": "Open", "HghPric": "High", "LwPric": "Low", "ClsPric": "Close", "SttlmPric": "Settle", "TtlTradgVol": "Contracts", "TtlTrfVal": "Val_in_lakh", "OpnIntrst": "OI", "ChngInOpnIntrst": "Change_in_OI", "TradDt": "Date"}, inplace=True)
+
+            df["Instrument"].replace("IDO", "OPTIDX", inplace=True)
+            df["Instrument"].replace("STO", "OPTSTK", inplace=True)
+            df["Instrument"].replace("IDF", "FUTIDX", inplace=True)
+            df["Instrument"].replace("STF", "FUTSTK", inplace=True)
+
+            df["Expiry"] = pd.to_datetime(df["Expiry"]).dt.strftime("%d-%b-%Y")
+            df["Date"] = pd.to_datetime(df["Date"]).dt.strftime("%d-%b-%Y")
+
+            header = ["Instrument", "Symbol", "Expiry", "Strike", "Type", "Open", "High", "Low", "Close", "Settle", "Contracts", "Val_in_lakh", "OI", "Change_in_OI", "Date"]
+
+            df.to_csv(fname, columns=header, index=False)
+
+            #fp.write(text)
         return fname
     
     @unzip
@@ -174,7 +193,17 @@ class NSEArchives:
             return fname
         text = self.udiff_bhavcopy_raw(dt)
         with open(fname, 'w') as fp:
-            fp.write(text)
+            df = pd.read_csv(BytesIO(text))
+
+            df.rename(columns={"TckrSymb": "Symbol", "SctySrs": "Series", "OpnPric": "Open", "HghPric": "High", "LwPric": "Low", "ClsPric": "Close", "LastPric": "Last", "PrvsClsgPric": "PrevClose", "TtlTradgVol": "Tottrdqty", "TtlTrfVal": "Tottrdval", "TradDt": "Date", "TtlNbOfTxsExctd": "Totaltrades", "ISIN": "ISIN"}, inplace=True)
+
+            df["Date"] = pd.to_datetime(df["Date"]).dt.strftime("%d-%b-%Y")
+
+            header = ["Symbol", "Series", "Open", "High", "Low", "Close", "Last", "PrevClose", "Tottrdqty", "Tottrdval", "Date", "Totaltrades", "ISIN"]
+
+            df.to_csv(fname, columns=header, index=False)
+
+            #fp.write(text)
         return fname
 
 class NSEIndicesArchives(NSEArchives):
