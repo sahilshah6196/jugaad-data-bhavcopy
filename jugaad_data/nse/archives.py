@@ -193,7 +193,7 @@ class NSEArchives:
             return fname
         text = self.udiff_bhavcopy_raw(dt)
         with open(fname, 'w') as fp:
-            df = pd.read_csv(io.BytesIO(text))
+            df = pd.read_csv(io.StringIO(text))
 
             df.rename(columns={"TckrSymb": "Symbol", "SctySrs": "Series", "OpnPric": "Open", "HghPric": "High", "LwPric": "Low", "ClsPric": "Close", "LastPric": "Last", "PrvsClsgPric": "PrevClose", "TtlTradgVol": "Tottrdqty", "TtlTrfVal": "Tottrdval", "TradDt": "Date", "TtlNbOfTxsExctd": "Totaltrades", "ISIN": "ISIN"}, inplace=True)
 
