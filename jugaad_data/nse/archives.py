@@ -175,7 +175,7 @@ class NSEArchives:
 
             header = ["Instrument", "Symbol", "Expiry", "Strike", "Type", "Open", "High", "Low", "Close", "Settle", "Contracts", "Val_in_lakh", "OI", "Change_in_OI", "Date"]
 
-            df = df.fillna(0)
+            df = df.fillna("XX")
 
             df.to_csv(fname, columns=header, index=False)
 
