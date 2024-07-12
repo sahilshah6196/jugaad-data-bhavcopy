@@ -166,7 +166,7 @@ class NSEArchives:
             df["Instrument"].replace("IDF", "FUTIDX", inplace=True)
             df["Instrument"].replace("STF", "FUTSTK", inplace=True)
 
-            df["Val_in_lakh"] = df["Val_in_lakh"].div(100000)
+            df["Val_in_lakh"] = df["Val_in_lakh"].div(100000).round(2)
 
             df["Expiry"] = pd.to_datetime(df["Expiry"]).dt.strftime("%d-%b-%Y")
             df["Date"] = pd.to_datetime(df["Date"]).dt.strftime("%d-%b-%Y")
