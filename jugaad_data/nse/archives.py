@@ -166,6 +166,8 @@ class NSEArchives:
             df["Instrument"].replace("IDF", "FUTIDX", inplace=True)
             df["Instrument"].replace("STF", "FUTSTK", inplace=True)
 
+            df = df.fillna(0)
+
             df["Strike"] = df["Strike"].astype(str)
             df["Strike"] = df["Strike"].str.replace(".0", "")
             df["Val_in_lakh"] = df["Val_in_lakh"].div(100000).round(2)
@@ -174,8 +176,6 @@ class NSEArchives:
             df["Date"] = pd.to_datetime(df["Date"]).dt.strftime("%d-%b-%Y")
 
             header = ["Instrument", "Symbol", "Expiry", "Strike", "Type", "Open", "High", "Low", "Close", "Settle", "Contracts", "Val_in_lakh", "OI", "Change_in_OI", "Date"]
-
-            df = df.fillna("XX")
 
             df.to_csv(fname, columns=header, index=False)
 
