@@ -220,6 +220,8 @@ class NSEArchives:
         mm = dt.strftime('%m')
         yyyy = dt.year
         r = self.get("dat_bhavcopy_fo", yyyy=yyyy, mm=mm, dd=dd)
+        print(r)
+        print(r.content)
         return r.content
 
     def dat_bhavcopy_fo_save(self, dt, dest, skip_if_present=True):
