@@ -350,6 +350,8 @@ udiff_bhavcopy_fo_raw = a.udiff_bhavcopy_fo_raw
 udiff_bhavcopy_fo_save = a.udiff_bhavcopy_fo_save
 udiff_bhavcopy_raw = a.udiff_bhavcopy_raw
 udiff_bhavcopy_save = a.udiff_bhavcopy_save
+dat_bhavcopy_fo_raw = a.dat_bhavcopy_fo_raw
+dat_bhavcopy_fo_save = a.dat_bhavcopy_fo_save
 
 ia = NSEIndicesArchives()
 bhavcopy_index_raw = ia.bhavcopy_index_raw
