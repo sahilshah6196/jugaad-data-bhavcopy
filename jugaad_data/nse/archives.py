@@ -51,16 +51,16 @@ class NSEArchives:
                 "bhavcopy_full": "/products/content/sec_bhavdata_full_{dd}{mm}{yyyy}.csv",
                 "bulk_deals": "/content/equities/bulk.csv",
                 "bhavcopy_fo": "/content/historical/DERIVATIVES/{yyyy}/{MMM}/fo{dd}{MMM}{yyyy}bhav.csv.zip",
-                "udiff_bhavcopy":"/content/cm/BhavCopy_NSE_CM_0_0_0_{yyyy}{mm}{dd}_F_0000.csv.zip",
-                "udiff_bhavcopy_fo":"/content/fo/BhavCopy_NSE_FO_0_0_0_{yyyy}{mm}{dd}_F_0000.csv.zip",
-                
+                "udiff_bhavcopy": "/content/cm/BhavCopy_NSE_CM_0_0_0_{yyyy}{mm}{dd}_F_0000.csv.zip",
+                "udiff_bhavcopy_fo": "/content/fo/BhavCopy_NSE_FO_0_0_0_{yyyy}{mm}{dd}_F_0000.csv.zip",
+                "dat_bhavcopy_fo": "content/trdops/FNO_BC{dd}{mm}{yyyy}.DAT",
             }
-        
+
     def get(self, rout, **params):
         url = self.base_url + self._routes[rout].format(**params)
         self.r = self.s.get(url, timeout=self.timeout)
         return self.r
-    
+
     @unzip
     def bhavcopy_raw(self, dt):
         """Downloads raw bhavcopy text for a specific date"""
@@ -181,6 +181,92 @@ class NSEArchives:
 
             #fp.write(text)
         return fname
+
+    @unzip
+    def udiff_bhavcopy_raw(self, dt):
+        """Downloads raw bhavcopy text for a specific date"""
+        dd = dt.strftime('%d')
+        mm = dt.strftime('%m').upper()
+        yyyy = dt.year
+        r = self.get("udiff_bhavcopy", yyyy=yyyy, mm=mm, dd=dd)
+        return r.content
+
+    def udiff_bhavcopy_save(self, dt, dest, skip_if_present=True):
+        """ Saves Derivatives Bhavcopy to a directory """
+        fmt = "BhavCopy_NSE_CM_0_0_0_%Y%m%d_F_0000.csv"
+        fname = os.path.join(dest, dt.strftime(fmt))
+        if os.path.isfile(fname) and skip_if_present:
+            return fname
+        text = self.udiff_bhavcopy_raw(dt)
+        with open(fname, 'w') as fp:
+            df = pd.read_csv(io.StringIO(text))
+
+            df.rename(columns={"TckrSymb": "Symbol", "SctySrs": "Series", "OpnPric": "Open", "HghPric": "High", "LwPric": "Low", "ClsPric": "Close", "LastPric": "Last", "PrvsClsgPric": "PrevClose", "TtlTradgVol": "Tottrdqty", "TtlTrfVal": "Tottrdval", "TradDt": "Date", "TtlNbOfTxsExctd": "Totaltrades", "ISIN": "ISIN"}, inplace=True)
+
+            df["Date"] = pd.to_datetime(df["Date"]).dt.strftime("%d-%b-%Y")
+
+            header = ["Symbol", "Series", "Open", "High", "Low", "Close", "Last", "PrevClose", "Tottrdqty", "Tottrdval", "Date", "Totaltrades", "ISIN"]
+
+            df = df.fillna(0)
+
+            df.to_csv(fname, columns=header, index=False)
+
+            #fp.write(text)
+        return fname
+
+    def dat_bhavcopy_fo_raw(self, dt):
+        """Downloads DAT bhavcopy text for a specific date"""
+        dd = dt.strftime('%d')
+        mm = dt.strftime('%m')
+        yyyy = dt.year
+        r = self.get("dat_bhavcopy_fo", yyyy=yyyy, mm=mm, dd=dd)
+        return r.content
+
+    def dat_bhavcopy_fo_save(self, dt, dest, skip_if_present=True):
+        """ Saves LTP Derivatives Bhavcopy to a directory """
+        fmt = "FNO_BC%d%m%Y.DAT"
+        fname = os.path.join(dest, dt.strftime(fmt))
+        if os.path.isfile(fname) and skip_if_present:
+            return fname
+        text = self.dat_bhavcopy_fo_raw(dt)
+        with open(fname, 'wb') as fp:
+
+            df = pd.read_csv(io.StringIO(text))
+
+            #df.rename(columns={"FinInstrmTp": "Instrument", "TckrSymb": "Symbol", "XpryDt": "Expiry", "StrkPric": "Strike", "OptnTp": "Type", "OpnPric": "Open", "HghPric": "High", "LwPric": "Low", "ClsPric": "Close", "SttlmPric": "Settle", "TtlTradgVol": "Contracts", "TtlTrfVal": "Val_in_lakh", "OpnIntrst": "OI", "ChngInOpnIntrst": "Change_in_OI", "TradDt": "Date"}, inplace=True)
+
+            #df["Instrument"].replace("IDO", "OPTIDX", inplace=True)
+            #df["Instrument"].replace("STO", "OPTSTK", inplace=True)
+            #df["Instrument"].replace("IDF", "FUTIDX", inplace=True)
+            #df["Instrument"].replace("STF", "FUTSTK", inplace=True)
+
+            df = df.fillna(0)
+
+            #df["Strike"] = df["Strike"].astype(str)
+            #df["Strike"] = df["Strike"].str.replace(".0", "")
+            #df["Val_in_lakh"] = df["Val_in_lakh"].div(100000).round(2)
+
+            df["Expiry"] = pd.to_datetime(df["Expiry"]).dt.strftime("%d-%b-%Y")
+            df["Date"] = pd.to_datetime(df["Date"]).dt.strftime("%d-%b-%Y")
+
+            header = ["Concat", "Instrument", "Symbol", "Expiry", "Strike", "Type", "A", "B", "C", "LTP", "Open", "High", "Low", "Close", "D", "Contracts_in_Shares", "Val_in_Lakh", "OI", "Change_in_OI", "E", "F", "Date", "G", "H", "I", "J"]
+            #header = ["Instrument", "Symbol", "Expiry", "Strike", "Type", "Open", "High", "Low", "Close", "Settle", "Contracts", "Val_in_lakh", "OI", "Change_in_OI", "Date"]
+
+            df.drop(["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"], axis=1, inplace=True)
+
+            df_header.drop(df_header.index[df_header["Instrument"] == "FUTSTK"], inplace = True)
+            df_header.drop(df_header.index[df_header["Instrument"] == "FUTIDX"], inplace = True)
+            df_header.drop(df_header.index[df_header["Instrument"] == "OPTIDX"], inplace = True)
+            df_header.drop(df_header.index[df_header["LTP"] == 0], inplace = True)
+
+            df["Strike"] = df["Strike"].astype(str)
+            df["Strike"] = df["Strike"].str.replace(".0", "")
+            df["Val_in_lakh"] = df["Val_in_lakh"].div(100000).round(2)
+
+            df.to_csv(fname, columns=header, index=False)
+
+            #fp.write(text)
+        return fname
     
     @unzip
     def udiff_bhavcopy_raw(self, dt):
@@ -213,7 +299,6 @@ class NSEArchives:
 
             #fp.write(text)
         return fname
-
 class NSEIndicesArchives(NSEArchives):
     def __init__(self):
         super().__init__()
