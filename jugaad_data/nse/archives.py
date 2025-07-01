@@ -233,7 +233,8 @@ class NSEArchives:
         text = self.dat_bhavcopy_fo_raw(dt)
         with open(fname, 'wb') as fp:
 
-            df = pd.read_csv(io.StringIO(text))
+            #df = pd.read_csv(io.StringIO(text))
+            df = pd.read_csv(text)
 
             #df.rename(columns={"FinInstrmTp": "Instrument", "TckrSymb": "Symbol", "XpryDt": "Expiry", "StrkPric": "Strike", "OptnTp": "Type", "OpnPric": "Open", "HghPric": "High", "LwPric": "Low", "ClsPric": "Close", "SttlmPric": "Settle", "TtlTradgVol": "Contracts", "TtlTrfVal": "Val_in_lakh", "OpnIntrst": "OI", "ChngInOpnIntrst": "Change_in_OI", "TradDt": "Date"}, inplace=True)
 
