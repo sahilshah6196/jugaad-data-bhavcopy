@@ -220,9 +220,12 @@ class NSEArchives:
         mm = dt.strftime('%m')
         yyyy = dt.year
         r = self.get("dat_bhavcopy_fo", yyyy=yyyy, mm=mm, dd=dd)
-        print(r)
-        print(r.content)
-        return r.content
+        #print(r)
+        print(type(r.content))
+        string_r = r.content.decode("utf-8")
+        print(type(string_r))
+
+        return string_r
 
     def dat_bhavcopy_fo_save(self, dt, dest, skip_if_present=True):
         """ Saves LTP Derivatives Bhavcopy to a directory """
