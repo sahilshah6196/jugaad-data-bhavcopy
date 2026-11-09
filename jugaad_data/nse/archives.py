@@ -24,7 +24,7 @@ def unzip(function):
 
 
 class NSEArchives:
-    base_url = "https://nsearchives.nseindia.com/"
+    base_url = "https://nsearchives.nseindia.in/"
     """Conventions
            d - 1, 12 (without leading zero)
           dd - 01, 21 (day of the month with leading zero)
@@ -314,7 +314,7 @@ class NSEIndicesArchives(NSEArchives):
         }
         self.h = {
         "Host": "www.niftyindices.com",
-        "Referer": "https://www.nseindia.com",
+        "Referer": "https://www.nseindia.in",
         "X-Requested-With": "XMLHttpRequest",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36",
        "Accept": "*/*",
@@ -388,7 +388,7 @@ if __name__ == "__main__":
     url = "https://www.niftyindices.com/Daily_Snapshot/ind_close_all_20082020.csv"
     headers = {
         "Host": "www.niftyindices.com",
-        "Referer": "https://www.nseindia.com",
+        "Referer": "https://www.nseindia.in",
        "X-Requested-With": "XMLHttpRequest",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36",
        "Accept": "*/*",

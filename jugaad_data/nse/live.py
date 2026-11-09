@@ -6,8 +6,8 @@ from requests import Session
 from ..util import live_cache
 class NSELive:
     time_out = 5
-    base_url = "https://www.nseindia.com/api"
-    page_url = "https://www.nseindia.com/get-quotes/equity?symbol=LT"
+    base_url = "https://www.nseindia.in/api"
+    page_url = "https://www.nseindia.in/get-quotes/equity?symbol=LT"
     _routes = {
             "stock_meta": "/equity-meta-info",
             "stock_quote": "/quote-equity",
@@ -28,8 +28,8 @@ class NSELive:
     def __init__(self):
         self.s = Session()
         h = {
-            "Host": "www.nseindia.com",
-            "Referer": "https://www.nseindia.com/get-quotes/equity?symbol=SBIN",
+            "Host": "www.nseindia.in",
+            "Referer": "https://www.nseindia.in/get-quotes/equity?symbol=SBIN",
             "X-Requested-With": "XMLHttpRequest",
             "pragma": "no-cache",
             "sec-fetch-dest": "empty",

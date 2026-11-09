@@ -29,8 +29,8 @@ class NSEHistory:
     def __init__(self):
         
         self.headers = {
-            "Host": "www.nseindia.com",
-            "Referer": "https://www.nseindia.com/get-quotes/equity?symbol=SBIN",
+            "Host": "www.nseindia.in",
+            "Referer": "https://www.nseindia.in/get-quotes/equity?symbol=SBIN",
             "X-Requested-With": "XMLHttpRequest",
             "pragma": "no-cache",
             "sec-fetch-dest": "empty",
@@ -48,7 +48,7 @@ class NSEHistory:
             "derivatives": "/api/historical/fo/derivatives",
             "equity_quote_page": "/get-quotes/equity",
         }
-        self.base_url = "https://www.nseindia.com"
+        self.base_url = "https://www.nseindia.in"
         self.cache_dir = ".cache"
         self.workers = 2
         self.use_threads = True
